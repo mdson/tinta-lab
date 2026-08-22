@@ -25,20 +25,25 @@ The Ubuntu Server is used for Linux administration, services and troubleshooting
 ## Current Topology
 
 ```
-                    VMware Host
-                         |
-                    FortiGate VM
-                 Gateway / Firewall
-                    10.10.10.1
-                         |
-              -----------------------
-              |                     |
-              |                     |
-        TINTA-DC01             Ubuntu Server
-        10.10.10.10            10.10.10.20
-              |                     |
-     Windows Server 2022       Linux Services
-       AD DS / DNS
+                   VMware Host Network
+                     192.168.179.0/24
+                            |
+                            |
+                    port1: 192.168.179.128
+                       [ FortiGate VM ]
+                    Firewall / NAT / DHCP
+                            |
+                     port2: 10.10.10.1
+                            |
+                     Tinta Lab LAN
+                     10.10.10.0/24
+                            |
+              +-------------+-------------+
+              |                           |
+         TINTA-DC01                   TINTA-LNX01
+         10.10.10.10                  10.10.10.20
+      Windows Server 2022          Ubuntu Server 22.04
+         AD DS / DNS                Linux / Nginx / SSH
 ```
 
 ---
@@ -47,15 +52,15 @@ The Ubuntu Server is used for Linux administration, services and troubleshooting
 
 Internal network:
 
-```10.10.10.0/24```
+`10.10.10.0/24`
 
 Default gateway:
 
-```10.10.10.1```
+`10.10.10.1`
 
 Domain:
 
-```tintalab.lab```
+`tintalab.lab`
 
 Addressing
 
@@ -63,7 +68,7 @@ Addressing
 |---|---|---|
 |  FortiGate  |  `10.10.10.1`  |  Gateway / Firewall / DHCP  |
 |  TINTA-DC01 |	`10.10.10.10` |	Domain Controller / DNS  |
-|  Ubuntu Server  |  `10.10.10.20`  |  Linux services  |
+|  TINTA-LNX01  |  `10.10.10.20`  |  Linux services  |
 
 All documented addresses belong to an isolated laboratory environment.
 
@@ -89,7 +94,7 @@ The FortiGate VM is positioned between the laboratory network and external conne
 
 Host:
 
-```TINTA-DC01```
+`TINTA-DC01`
 
 Operating system:
 
@@ -107,15 +112,23 @@ Current roles:
 
 Domain:
 
-```tintalab.lab```
+`tintalab.lab`
 
 ---
 
 ## Ubuntu Server
 
+Host:
+
+`tinta-lnx01`
+
+Operating system:
+
+Ubuntu Server 22.04.5 LTS
+
 IP address:
 
-```10.10.10.20```
+`10.10.10.20`
 
 Current purposes:
 
