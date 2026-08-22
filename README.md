@@ -51,9 +51,9 @@ Current addressing:
 
 | Host | IP Address | Role |
 |---|---|---|
-| FortiGate | `10.10.10.1` | Gateway / Firewall |
-| TINTA-DC01 | `10.10.10.10` | Windows Server / AD DS / DNS |
-| Ubuntu Server | `10.10.10.20` | Linux services |
+| FortiGate VM | `10.10.10.1` | Gateway / Firewall / DHCP |
+| TINTA-DC01 | `10.10.10.10` | Windows Server 2022 / AD DS / DNS |
+| TINTA-LNX01 | `10.10.10.20` | Ubuntu Server 22.04 LTS / Linux Services |
 
 > The addresses documented in this repository belong only to the isolated laboratory environment.
 
