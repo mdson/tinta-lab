@@ -6,6 +6,55 @@ The purpose of this repository is to document practical infrastructure scenarios
 
 ---
 
+## 🚀 Current Milestone — Linux Operations / Tinta Status v0.6
+
+The current milestone focuses on Linux operations, automation and troubleshooting.
+
+A lightweight status dashboard is generated automatically on `TINTA-LNX01` using Bash and served by Nginx.
+
+Current implementation includes:
+
+- Hostname, uptime and Nginx service state collection
+- Memory metrics collected with `free`
+- Filesystem metrics collected with `df`
+- Text processing with pipes, `grep`, `tail` and `awk`
+- Disk usage classification with Bash conditional logic
+- Automated execution with `cron`
+- Application and cron log handling
+- Deployment using a dedicated Linux group and least-privilege permissions
+- `setgid` directory behavior for group inheritance
+- HTTP health validation with `curl`
+- Exit-code based success and failure handling
+- Controlled failure scenarios for troubleshooting practice
+
+### Operational Flow
+
+```text
+cron
+  ↓
+gerar-status.sh
+  ↓
+collect system metrics
+  ↓
+generate staging HTML
+  ↓
+deploy to Nginx web root
+  ↓
+HTTP validation
+  ↓
+SUCCESS / ERROR log
+```
+
+### Failure Scenarios Reproduced
+- Shell script without execute permission
+- Cron execution failure
+- Deployment permission denied
+- Difference between file and directory permissions
+- Nginx stopped / TCP connection refused
+- HTTP health-check failure
+
+---
+
 ## 🎯 Objectives
 
 Tinta Lab is used to develop practical experience in:
@@ -82,12 +131,19 @@ Current environment:
 Current and planned exercises include:
 
 - SSH administration
-- User and permission management
+- Linux users, groups and supplementary groups
+- File and directory permission models
+- `chmod`, `chown`, `setgid` and least privilege
 - Service management with systemd
-- Logs and troubleshooting
-- TCP/IP configuration
-- Resource monitoring
-- Shell scripting
+- Cron scheduling and troubleshooting
+- stdout, stderr and exit codes
+- Log inspection with `journalctl`
+- Resource inspection with `free`, `df`, `ps` and `ss`
+- Text processing with pipes, `grep`, `awk`, `head` and `tail`
+- Bash scripting
+- Nginx administration
+- HTTP health checks with `curl`
+- Controlled incident reproduction and diagnosis
 
 ---
 
