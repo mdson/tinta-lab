@@ -43,7 +43,7 @@ The Ubuntu Server is used for Linux administration, services and troubleshooting
          TINTA-DC01                   TINTA-LNX01
          10.10.10.10                  10.10.10.20
       Windows Server 2022          Ubuntu Server 22.04
-         AD DS / DNS                Linux / Nginx / SSH
+         AD DS / DNS             Linux / Nginx / Bash / Cron / SSH
 ```
 
 ---
@@ -133,13 +133,17 @@ IP address:
 Current purposes:
 
 - Linux administration
-- SSH access
-- Service management
-- Networking exercises
+- SSH remote administration
+- Service management with systemd
+- Nginx web services
+- Tinta Status dashboard
+- Bash automation
+- Cron scheduling
 - Resource monitoring
+- HTTP health checks
+- User/group and permission management
 - Log analysis
-- Web services
-- Shell scripting
+- Controlled troubleshooting scenarios
 
 Additional services may be introduced as the laboratory evolves.
 
