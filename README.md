@@ -6,26 +6,27 @@ The purpose of this repository is to document practical infrastructure scenarios
 
 ---
 
-## 🚀 Current Milestone — Linux Operations / Tinta Status v0.6
+## 🚀 Active Workstream — Linux Operations / Tinta Status
 
-The current milestone focuses on Linux operations, automation and troubleshooting.
-
-A lightweight status dashboard is generated automatically on `TINTA-LNX01` using Bash and served by Nginx.
+The current Linux workstream focuses on operational automation and troubleshooting through a lightweight status service running on `TINTA-LNX01`.
 
 Current implementation includes:
 
-- Hostname, uptime and Nginx service state collection
-- Memory metrics collected with `free`
-- Filesystem metrics collected with `df`
-- Text processing with pipes, `grep`, `tail` and `awk`
-- Disk usage classification with Bash conditional logic
+Implemented capabilities include:
+
+- System and service state collection using Bash
+- Memory and filesystem metric processing
+- Text processing with pipes, `grep`, `awk`, `head` and `tail`
+- Conditional health classification
 - Automated execution with `cron`
-- Application and cron log handling
-- Deployment using a dedicated Linux group and least-privilege permissions
-- `setgid` directory behavior for group inheritance
-- HTTP health validation with `curl`
-- Exit-code based success and failure handling
-- Controlled failure scenarios for troubleshooting practice
+- Application and cron logging
+- Linux users, groups and least-privilege permissions
+- Nginx-based web publishing
+- Temporary-file and atomic-rename deployment
+- HTTP availability validation
+- Build/content validation
+- Exit-code based failure handling
+- Controlled troubleshooting scenarios
 
 ### Operational Flow
 
@@ -36,11 +37,15 @@ gerar-status.sh
   ↓
 collect system metrics
   ↓
-generate staging HTML
+generate staging HTML + Build ID
   ↓
-deploy to Nginx web root
+copy to temporary deployment file
   ↓
-HTTP validation
+atomic rename to index.html
+  ↓
+HTTP availability check
+  ↓
+served-content / Build ID validation
   ↓
 SUCCESS / ERROR log
 ```
@@ -128,7 +133,7 @@ Current environment:
 
 ## 🐧 Linux
 
-Current and planned exercises include:
+The Linux workstream currently covers:
 
 - SSH administration
 - Linux users, groups and supplementary groups
