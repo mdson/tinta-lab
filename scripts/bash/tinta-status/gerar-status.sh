@@ -3,11 +3,15 @@
 OUTPUT="$HOME/tinta-status/tinta-status-gerado.html"
 LOG="$HOME/tinta-status/tinta-status.log"
 PUBLICADO="/var/www/html/tinta-status/index.html"
+TEMP_PUBLICADO="/var/www/html/tinta-status/index.html.tmp"
+
 
 HOST=$(hostname)
 DATA=$(date)
 UPTIME=$(uptime -p)
 NGINX=$(systemctl is-active nginx)
+BUILD_ID=$(date -u '+%Y%m%dT%H%M%SZ')
+
 
 RAM_TOTAL=$(free -h | grep '^Mem:' | awk '{print $2}')
 RAM_USADA=$(free -h | grep '^Mem:' | awk '{print $3}')
@@ -35,7 +39,7 @@ cat > "$OUTPUT" <<EOF
     <title>Tinta Lab Status</title>
 </head>
 <body>
-    <h1>Tinta Lab Status v0.6</h1>
+    <h1>Tinta Lab Status v0.7</h1>
 
     <h2>Informações do servidor</h2>
 
@@ -43,6 +47,7 @@ cat > "$OUTPUT" <<EOF
     <p><strong>Atualizado em:</strong> $DATA</p>
     <p><strong>Uptime:</strong> $UPTIME</p>
     <p><strong>Nginx:</strong> $NGINX</p>
+    <p><strong>Build ID:</strong> $BUILD_ID</p>
 
     <h2>Memória</h2>
         <p><strong>Total:</strong> $RAM_TOTAL</p>
@@ -61,10 +66,19 @@ EOF
 
 AGORA=$(date '+%Y-%m-%d %H:%M:%S')
 
-if cp "$OUTPUT" "$PUBLICADO"; then
-    echo "$AGORA - DEPLOY SUCCESS - $PUBLICADO" >> "$LOG"
+if cp "$OUTPUT" "$TEMP_PUBLICADO"; then
+
+    if mv "$TEMP_PUBLICADO" "$PUBLICADO"; then
+        echo "$AGORA - DEPLOY SUCCESS - build=$BUILD_ID - $PUBLICADO" >> "$LOG"
+    else
+        echo "$AGORA - DEPLOY ERROR - falha no rename para produção - build=$BUILD_ID" >> "$LOG"
+        rm -f "$TEMP_PUBLICADO"
+        exit 1
+    fi
+
 else
-    echo "$AGORA - DEPLOY ERROR - não foi possível publicar $PUBLICADO" >> "$LOG"
+    echo "$AGORA - DEPLOY ERROR - falha ao criar arquivo temporário - build=$BUILD_ID" >> "$LOG"
+    rm -f "$TEMP_PUBLICADO"
     exit 1
 fi
 
@@ -78,4 +92,11 @@ if [ "$CURL_EXIT" -eq 0 ] && [ "$HTTP_CODE" -eq 200 ]; then
 else
     echo "$AGORA - HTTP ERROR - curl_exit=$CURL_EXIT status=$HTTP_CODE" >> "$LOG"
     exit 2
+fi
+
+if curl -sS http://localhost/tinta-status/ | grep -Fq "$BUILD_ID"; then
+    echo "$AGORA - CONTENT SUCCESS - build=$BUILD_ID" >> "$LOG"
+else
+    echo "$AGORA - CONTENT ERROR - build esperado=$BUILD_ID não encontrado" >> "$LOG"
+    exit 3
 fi
