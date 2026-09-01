@@ -31,35 +31,150 @@ else
     DISCO_STATUS="OK"
 fi
 
+case "$DISCO_STATUS" in
+    OK)
+        DISCO_CLASS="ok"
+        ;;
+    WARNING)
+        DISCO_CLASS="warning"
+        ;;
+    CRITICAL)
+        DISCO_CLASS="critical"
+        ;;
+    *)
+        DISCO_CLASS="unknown"
+        ;;
+esac
+
+case "$NGINX" in
+    active)
+        NGINX_STATUS="OK"
+        NGINX_CLASS="ok"
+        ;;
+    inactive|failed)
+        NGINX_STATUS="CRITICAL"
+        NGINX_CLASS="critical"
+        ;;
+    *)
+        NGINX_STATUS="UNKNOWN"
+        NGINX_CLASS="unknown"
+        ;;
+esac
+
+if [ "$NGINX_STATUS" = "CRITICAL" ] || [ "$DISCO_STATUS" = "CRITICAL" ]; then
+    GERAL_STATUS="CRITICAL"
+    GERAL_CLASS="critical"
+elif [ "$DISCO_STATUS" = "WARNING" ]; then
+    GERAL_STATUS="WARNING"
+    GERAL_CLASS="warning"
+else
+    GERAL_STATUS="OK"
+    GERAL_CLASS="ok"
+fi
+
 cat > "$OUTPUT" <<EOF
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <title>Tinta Lab Status</title>
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #111827;
+        color: #e5e7eb;
+        margin: 0;
+        padding: 30px;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: auto;
+    }
+
+    .card {
+        background: #1f2937;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .status {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: bold;
+    }
+
+    .ok {
+        background: #14532d;
+        color: #bbf7d0;
+    }
+
+    .warning {
+        background: #713f12;
+        color: #fde68a;
+    }
+
+    .critical {
+        background: #7f1d1d;
+        color: #fecaca;
+    }
+
+    .unknown {
+        background: #374151;
+        color: #d1d5db;
+    }
+
+    .metric {
+        margin: 8px 0;
+    }
+
+    .build {
+        color: #9ca3af;
+        font-size: 0.85rem;
+    }
+    </style>
 </head>
 <body>
-    <h1>Tinta Lab Status v0.7</h1>
+<div class="container">
 
-    <h2>Informações do servidor</h2>
+    <h1>Tinta Lab Status v0.8</h1>
 
-    <p><strong>Hostname:</strong> $HOST</p>
-    <p><strong>Atualizado em:</strong> $DATA</p>
-    <p><strong>Uptime:</strong> $UPTIME</p>
-    <p><strong>Nginx:</strong> $NGINX</p>
-    <p><strong>Build ID:</strong> $BUILD_ID</p>
+    <div class="card">
+        <h2>Overall Status</h2>
+        <span class="status $GERAL_CLASS">$GERAL_STATUS</span>
 
-    <h2>Memória</h2>
-        <p><strong>Total:</strong> $RAM_TOTAL</p>
-        <p><strong>Utilizada:</strong> $RAM_USADA</p>
-        <p><strong>Disponível:</strong> $RAM_DISPONIVEL</p>
+        <p class="metric"><strong>Hostname:</strong> $HOST</p>
+        <p class="metric"><strong>Uptime:</strong> $UPTIME</p>
+        <p class="metric"><strong>Updated:</strong> $DATA</p>
+        <p class="build"><strong>Build ID:</strong> $BUILD_ID</p>
+    </div>
 
-    <h2>Filesystem raiz</h2>
-        <p><strong>Total:</strong> $DISCO_TOTAL</p>
-        <p><strong>Utilizado:</strong> $DISCO_USADO</p>
-        <p><strong>Livre:</strong> $DISCO_LIVRE</p>
-        <p><strong>Ocupação:</strong> $DISCO_PERCENTUAL</p>
-        <p><strong>Status:</strong> $DISCO_STATUS</p>
+    <div class="card">
+        <h2>Nginx</h2>
+        <span class="status $NGINX_CLASS">$NGINX_STATUS</span>
+        <p class="metric"><strong>systemd state:</strong> $NGINX</p>
+    </div>
+
+    <div class="card">
+        <h2>Memory</h2>
+        <p class="metric"><strong>Total:</strong> $RAM_TOTAL</p>
+        <p class="metric"><strong>Used:</strong> $RAM_USADA</p>
+        <p class="metric"><strong>Available:</strong> $RAM_DISPONIVEL</p>
+    </div>
+
+    <div class="card">
+        <h2>Root Filesystem</h2>
+        <span class="status $DISCO_CLASS">$DISCO_STATUS</span>
+
+        <p class="metric"><strong>Total:</strong> $DISCO_TOTAL</p>
+        <p class="metric"><strong>Used:</strong> $DISCO_USADO</p>
+        <p class="metric"><strong>Available:</strong> $DISCO_LIVRE</p>
+        <p class="metric"><strong>Usage:</strong> $DISCO_PERCENTUAL</p>
+    </div>
+
+</div>
 </body>
 </html>
 EOF
